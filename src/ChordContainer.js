@@ -36,6 +36,8 @@ export const ChordContainer = () => {
         .sortSubgroups(d3.descending)
         .sortChords(d3.descending)
 
+    const labelRadius = (innerRadius * 0.2 + outerRadius * 0.8)
+    const arcLabel = d3.arc().innerRadius(labelRadius).outerRadius(labelRadius);
 
     const chords = chord(data)
 
@@ -46,7 +48,8 @@ export const ChordContainer = () => {
             <svg width={width} height={height}>
                 <g transform={`translate(${width / 2}, ${height / 2})`}>
                     {chords.groups.map((each) => {
-                        // console.log(color(names[each.index]))
+                        // console.log(chordArc.centroid(each))
+                        let textTransform = chordArc.centroid(each);
                         return (
                             <g>
                                 <path
@@ -54,15 +57,16 @@ export const ChordContainer = () => {
                                     d={chordArc(each)}
                                 /><title>{`${names[each.index]}
                                 ${(each.value)}`}</title>
-
-                                {/* <text
-                                    x={8}
+                                <text
+                                    transform={`translate(${textTransform[0] * 1.2}, ${textTransform[1] * 1.2})`}
+                                    // x={2}
                                     dy='0.35em'
                                     fontWeight={'bold'}
-                                    textAnchor={'end'}
+                                    textAnchor={'middle'}
                                 >
-                                    ${names[each.index]}
-                                </text> */}
+                                    {names[each.index]}
+                                </text>
+
                             </g>
                         )
                     })}
