@@ -36,10 +36,8 @@ export const ChordContainer = () => {
         .sortSubgroups(d3.descending)
         .sortChords(d3.descending)
 
-    const labelRadius = (innerRadius * 0.2 + outerRadius * 0.8)
-    const arcLabel = d3.arc().innerRadius(labelRadius).outerRadius(labelRadius);
-
     const chords = chord(data)
+    const textPadding = 1.2
 
     // console.log(chords.groups)
 
@@ -58,7 +56,7 @@ export const ChordContainer = () => {
                                 /><title>{`${names[each.index]}
                                 ${(each.value)}`}</title>
                                 <text
-                                    transform={`translate(${textTransform[0] * 1.2}, ${textTransform[1] * 1.2})`}
+                                    transform={`translate(${textTransform[0] * textPadding}, ${textTransform[1] * textPadding})`}
                                     // x={2}
                                     dy='0.35em'
                                     fontWeight={'bold'}
