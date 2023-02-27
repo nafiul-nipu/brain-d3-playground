@@ -1,5 +1,7 @@
 import * as d3 from 'd3'
 
+import networkdata from './ep187_full_network.json'
+
 export const ChordContainer = () => {
     let data = Object.assign([
         [.096899, .008859, .000554, .004430, .025471, .024363, .005537, .025471],
@@ -14,7 +16,9 @@ export const ChordContainer = () => {
         names: ["Apple", "HTC", "Huawei", "LG", "Nokia", "Samsung", "Sony", "Other"],
         colors: ["#c4c4c4", "#69b40f", "#ec1d25", "#c8125c", "#008fc8", "#10218b", "#134b24", "#737373"]
     })
-    console.log(data)
+    console.log(networkdata)
+
+    data = Object.assign(networkdata[2].matrix, { names: networkdata[2]["electrodes"], colors: data.colors })
 
     const names = data.names === undefined ? d3.range(data.length) : data.names
     const colors = data.colors === undefined ? d3.quantize(d3.interpolateRainbow, names.length) : data.colors
@@ -24,7 +28,7 @@ export const ChordContainer = () => {
     const outerRadius = Math.min(width, height) * 0.5 - 60;
     const innerRadius = outerRadius - 10
     const color = d3.scaleOrdinal(names, colors)
-    const ribbon = d3.ribbon()
+    const ribbon = d3.ribbonArrow()
         .radius(innerRadius - 1)
         .padAngle(1 / innerRadius)
 
@@ -32,7 +36,7 @@ export const ChordContainer = () => {
         .innerRadius(innerRadius)
         .outerRadius(outerRadius)
 
-    const chord = d3.chord()
+    const chord = d3.chordDirected()
         .padAngle(10 / innerRadius)
         .sortSubgroups(d3.descending)
         .sortChords(d3.descending)
@@ -40,7 +44,7 @@ export const ChordContainer = () => {
     const chords = chord(data)
     const textPadding = 1.2
 
-    // console.log(chords.groups)
+    console.log(chords)
 
     return (
         <div>
@@ -76,8 +80,7 @@ export const ChordContainer = () => {
                                     style={{ mixBlendMode: 'multiply' }}
                                     fill={color(names[each.source.index])}
                                     d={ribbon(each)}
-                                /><title>{`${(each.source.value)} ${names[each.target.index]} → ${names[each.source.index]}${each.source.index === each.target.index ? ""
-                                    : `\n${(each.target.value)} ${names[each.source.index]} → ${names[each.target.index]}`}`}</title>
+                                /><title>{`E${names[each.source.index]} → E${names[each.target.index]} = ${(each.source.value)}`}</title>
                             </g>
                         )
                     })}
