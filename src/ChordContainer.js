@@ -14,6 +14,7 @@ export const ChordContainer = () => {
         names: ["Apple", "HTC", "Huawei", "LG", "Nokia", "Samsung", "Sony", "Other"],
         colors: ["#c4c4c4", "#69b40f", "#ec1d25", "#c8125c", "#008fc8", "#10218b", "#134b24", "#737373"]
     })
+    console.log(data)
 
     const names = data.names === undefined ? d3.range(data.length) : data.names
     const colors = data.colors === undefined ? d3.quantize(d3.interpolateRainbow, names.length) : data.colors
