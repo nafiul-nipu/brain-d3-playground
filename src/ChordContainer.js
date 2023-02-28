@@ -41,9 +41,13 @@ export const ChordContainer = () => {
     const textPadding = 1.2
 
     // console.log(chords)
+    const base = width / 2
+    const hB = height / 2
+    const x = [base, base + 300, base + 600, base + 900, base, base + 300, base + 600, base + 900]
+    const y = [hB, hB, hB, hB, hB + 300, hB + 300, hB + 300, hB + 300]
 
     return (
-        <div>
+        <svg width={window.innerWidth} height={window.innerHeight}>
             {
                 networkdata.map((nd, i) => {
                     // console.log(nd)
@@ -55,46 +59,46 @@ export const ChordContainer = () => {
                         const colors = data.colors === undefined ? d3.quantize(d3.interpolateRainbow, names.length) : data.colors
                         const color = d3.scaleOrdinal(names, colors)
                         return (
-                            <svg width={width} height={height}>
-                                <g transform={`translate(${width / 2}, ${height / 2})`}>
-                                    {chords.groups.map((each) => {
-                                        // console.log(each)
-                                        let textTransform = chordArc.centroid(each);
-                                        return (
-                                            <g key={each.index}>
-                                                <path
-                                                    fill={color(names[each.index])}
-                                                    d={chordArc(each)}
-                                                /><title>{`${names[each.index]}
+                            // <svg width={width} height={height}>
+                            <g transform={`translate(${x[i]}, ${y[i]})`}>
+                                {chords.groups.map((each) => {
+                                    // console.log(each)
+                                    let textTransform = chordArc.centroid(each);
+                                    return (
+                                        <g key={each.index}>
+                                            <path
+                                                fill={color(names[each.index])}
+                                                d={chordArc(each)}
+                                            /><title>{`${names[each.index]}
                                                 ${(each.value)}`}</title>
-                                                <text
-                                                    transform={`translate(${textTransform[0] * textPadding}, ${textTransform[1] * textPadding})`}
-                                                    // x={2}
-                                                    dy='0.35em'
-                                                    // fontWeight={'bold'}
-                                                    fontSize='0.75em'
-                                                    textAnchor={'middle'}
-                                                >
-                                                    {names[each.index]}
-                                                </text>
+                                            <text
+                                                transform={`translate(${textTransform[0] * textPadding}, ${textTransform[1] * textPadding})`}
+                                                // x={2}
+                                                dy='0.35em'
+                                                // fontWeight={'bold'}
+                                                fontSize='0.75em'
+                                                textAnchor={'middle'}
+                                            >
+                                                {names[each.index]}
+                                            </text>
 
-                                            </g>
-                                        )
-                                    })}
-                                    {chords.map((each, i) => {
-                                        return (
-                                            <g fillOpacity={0.8} key={i}>
-                                                <path
-                                                    style={{ mixBlendMode: 'multiply' }}
-                                                    fill={color(names[each.source.index])}
-                                                    d={ribbon(each)}
-                                                /><title>{`E${names[each.source.index]} → E${names[each.target.index]} = ${(each.source.value)}`}</title>
-                                            </g>
-                                        )
-                                    })}
-                                </g>
+                                        </g>
+                                    )
+                                })}
+                                {chords.map((each, i) => {
+                                    return (
+                                        <g fillOpacity={0.8} key={i} >
+                                            <path
+                                                style={{ mixBlendMode: 'multiply' }}
+                                                fill={color(names[each.source.index])}
+                                                d={ribbon(each)}
+                                            /><title>{`E${names[each.source.index]} → E${names[each.target.index]} = ${(each.source.value)}`}</title>
+                                        </g>
+                                    )
+                                })}
+                            </g>
 
-                            </svg>
+                            // </svg>
 
                         )
                     }
@@ -122,39 +126,39 @@ export const ChordContainer = () => {
                             .padAngle(0.2)
 
                         return (
-                            <svg width={width} height={height}>
-                                <g transform={`translate(${width / 2}, ${height / 2})`}>
-                                    {data_ready.map((each, i) => {
-                                        // console.log(each)
-                                        let textTransform = donArc.centroid(each);
-                                        return (
-                                            <g key={i}>
-                                                <path
-                                                    fill={color(each.index)}
-                                                    d={donArc(each)}
-                                                /><title>{`E${+each.data[0]}`}</title>
-                                                <text
-                                                    transform={`translate(${textTransform[0] * textPadding}, ${textTransform[1] * textPadding})`}
-                                                    // x={2}
-                                                    dy='0.35em'
-                                                    fontSize='0.85em'
-                                                    // fontWeight={'bold'}
-                                                    textAnchor={'middle'}
-                                                >
-                                                    E{+each.data[0]}
-                                                </text>
+                            // <svg width={width} height={height}>
+                            <g transform={`translate(${x[i]}, ${y[i]})`}>
+                                {data_ready.map((each, i) => {
+                                    // console.log(each)
+                                    let textTransform = donArc.centroid(each);
+                                    return (
+                                        <g key={i}>
+                                            <path
+                                                fill={color(each.index)}
+                                                d={donArc(each)}
+                                            /><title>{`E${+each.data[0]}`}</title>
+                                            <text
+                                                transform={`translate(${textTransform[0] * textPadding}, ${textTransform[1] * textPadding})`}
+                                                // x={2}
+                                                dy='0.35em'
+                                                fontSize='0.85em'
+                                                // fontWeight={'bold'}
+                                                textAnchor={'middle'}
+                                            >
+                                                E{+each.data[0]}
+                                            </text>
 
-                                            </g>
-                                        )
-                                    })}
-                                </g>
-                            </svg>
+                                        </g>
+                                    )
+                                })}
+                            </g>
+                            // </svg>
                         )
                     }
                 })
             }
 
-        </div>
+        </svg>
     )
 }
 
