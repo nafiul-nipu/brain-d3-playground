@@ -2,6 +2,8 @@ import * as d3 from 'd3'
 
 import networkdata from './ep187_full_network.json'
 
+// 100, 101, 201, 300 , 301, 400, 401, 501
+
 export const ChordContainer = () => {
     // let data = Object.assign([
     //     [.096899, .008859, .000554, .004430, .025471, .024363, .005537, .025471],
@@ -17,7 +19,7 @@ export const ChordContainer = () => {
     //     colors: ["#c4c4c4", "#69b40f", "#ec1d25", "#c8125c", "#008fc8", "#10218b", "#134b24", "#737373"]
     // })
 
-    // console.log(networkdata)
+    console.log(networkdata)
     const colorList = ["#c4c4c4", "#69b40f", "#ec1d25", "#c8125c", "#008fc8", "#10218b", "#134b24", "#737373"]
 
     const height = 350;
@@ -47,7 +49,7 @@ export const ChordContainer = () => {
     const y = [hB, hB, hB, hB, hB + 300, hB + 300, hB + 300, hB + 300]
 
     return (
-        <svg width={window.innerWidth} height={window.innerHeight}>
+        <svg width={window.innerWidth} height={window.innerHeight} className='top-svg'>
             {
                 networkdata.map((nd, i) => {
                     // console.log(nd)

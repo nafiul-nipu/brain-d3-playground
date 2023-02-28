@@ -1,0 +1,17 @@
+# Atlas Name: BrainSuiteAtlas1
+0	background
+100	R. Frontal Lobe
+101	L. Frontal Lobe
+184	R. cingulate gyrus
+185	L. cingulate gyrus
+200	R. Parietal Lobe
+201	L. Parietal Lobe
+300	R. Temporal Lobe
+301	L. Temporal Lobe
+400	R. Occipital Lobe
+401	L. Occipital Lobe
+500	R. Insula
+501	L. Insula
+800	Brainstem
+850	Corpus Callosum
+900	Cerebellum

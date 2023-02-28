@@ -1,0 +1,17 @@
+
+100	R. Frontal Lobe
+
+101	L. Frontal Lobe
+
+201	L. Parietal Lobe
+
+300	R. Temporal Lobe
+
+301	L. Temporal Lobe
+
+400	R. Occipital Lobe
+
+401	L. Occipital Lobe
+
+501	L. Insula
+
