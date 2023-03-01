@@ -8,8 +8,9 @@ function App() {
     <Container fluid>
       <Row>
         <Col md='12' className='svg-container'>
-          <ChordContainer />
           <Brain className='bottom-svg'/>
+          <ChordContainer />
+          
 
         </Col>
       </Row>

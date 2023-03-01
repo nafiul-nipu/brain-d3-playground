@@ -45,8 +45,8 @@ export const ChordContainer = () => {
     // console.log(chords)
     const base = width / 2
     const hB = height / 2
-    const x = [base, base + 300, base + 600, base + 900, base, base + 300, base + 600, base + 900]
-    const y = [hB, hB, hB, hB, hB + 300, hB + 300, hB + 300, hB + 300]
+    const x = [base + 550, base + 260, base + 280, base - 30 , base + 650, base + 450, base + 100, base-20]
+    const y = [hB, hB, hB+300, hB + 300, hB + 300, hB + 600, hB + 600, hB+50]
 
     return (
         <svg width={window.innerWidth} height={window.innerHeight} className='top-svg'>
