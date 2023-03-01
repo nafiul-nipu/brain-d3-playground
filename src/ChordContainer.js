@@ -162,10 +162,13 @@ export const ChordContainer = () => {
                         )
                     } else {
                         const uniqueNames = [...new Set(nd.roiWithCount.map(item => item.count))];
+                        uniqueNames.sort((a, b) => a - b);
                         console.log(uniqueNames)
-                        const strokeWidthScale = d3.scaleLinear()
-                            .domain([1, nd.maxCount])
-                            .range([1, 6])
+                        const strokeRange = Array.from({ length: uniqueNames.length }, (_, i) => 1 + i * 0.25);
+                        console.log(strokeRange)
+                        const strokeWidthScale = d3.scaleOrdinal()
+                            .domain(uniqueNames)
+                            .range(strokeRange)
 
                         return (
                             nd['roiWithCount'].map((each) => {
@@ -183,8 +186,9 @@ export const ChordContainer = () => {
                                                 refY="3"
                                                 orient="auto"
                                                 markerUnits="strokeWidth"
+
                                             >
-                                                <path d="M0,0 L0,6 L9,3 z" fill="black" />
+                                                <path d="M0,0 L0,6 L9,3 z" fill="black" opacity={0.5} />
                                             </marker>
                                         </defs>
                                         <line
@@ -192,8 +196,8 @@ export const ChordContainer = () => {
                                             y1={y[source]}
                                             x2={x[target]}
                                             y2={y[target]}
-                                            stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)"
-                                        ></line>
+                                            stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)" strokeOpacity={0.4}
+                                        ></line><title>{`E${+each.source} -> E${+each.target} = ${+each.count}`}</title>
                                     </g>
                                 )
                             })
