@@ -66,7 +66,7 @@ export const ChordContainer = () => {
                         const color = d3.scaleOrdinal(names, colors)
                         return (
                             // <svg width={width} height={height}>
-                            <g transform={`translate(${x[i]}, ${y[i]})`}>
+                            <g transform={`translate(${x[i]}, ${y[i]})`} id={`roi_${nd.roi}`}>
                                 {chords.groups.map((each) => {
                                     // console.log(each)
                                     let textTransform = chordArc.centroid(each);
@@ -133,7 +133,7 @@ export const ChordContainer = () => {
 
                         return (
                             // <svg width={width} height={height}>
-                            <g transform={`translate(${x[i]}, ${y[i]})`}>
+                            <g transform={`translate(${x[i]}, ${y[i]})`} id={`roi_${nd.roi}`}>
                                 {data_ready.map((each, i) => {
                                     // console.log(each)
                                     let textTransform = donArc.centroid(each);
@@ -170,13 +170,14 @@ export const ChordContainer = () => {
                             .domain(uniqueNames)
                             .range(strokeRange)
 
+                        // console.log(d3.select(`#roi_100`).node().getBBox());
                         return (
                             nd['roiWithCount'].map((each) => {
-                                // console.log(each)
+                                // console.log(d3.select(`#roi_${each.source}`).node().getBBox())
                                 let source = rois.indexOf(each.source)
                                 let target = rois.indexOf(each.target)
                                 return (
-                                    <g className='aGroup'>
+                                    <g className='aGroup' style={{ zIndex: 1 }}>
                                         <defs>
                                             <marker
                                                 id="arrow"
@@ -197,7 +198,7 @@ export const ChordContainer = () => {
                                             x2={x[target]}
                                             y2={y[target]}
                                             stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)" strokeOpacity={0.4}
-                                        ></line><title>{`E${+each.source} -> E${+each.target} = ${+each.count}`}</title>
+                                        ></line><title>{`${+each.source} -> ${+each.target} = ${+each.count}`}</title>
                                     </g>
                                 )
                             })
