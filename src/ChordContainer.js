@@ -177,7 +177,7 @@ export const ChordContainer = () => {
                                 let source = rois.indexOf(each.source)
                                 let target = rois.indexOf(each.target)
                                 return (
-                                    <g className='aGroup' style={{ zIndex: 1 }}>
+                                    <g className='aGroup'>
                                         <defs>
                                             <marker
                                                 id="arrow"
