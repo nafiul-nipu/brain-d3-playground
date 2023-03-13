@@ -1,6 +1,7 @@
 import * as d3 from 'd3'
 import { useEffect, useState } from 'react'
 // 100, 101, 201, 300 , 301, 400, 401, 501
+import roiElectrode from '../data/roi-electrode.json'
 
 const regions = ["R. Frontal Lobe", "L. Frontal Lobe", "L. Parietal Lobe", "R. Temporal Lobe", "L. Temporal Lobe",
     "R. Occipital Lobe", "L. Occipital Lobe", "L. Insula"]
@@ -59,50 +60,81 @@ export const ChordContainerNetwork = ({ networkdata }) => {
             {
                 networkdata.map((nd, i) => {
                     // console.log(nd)
-                    // if (nd.roi === 'rest') {
-                    //     const uniqueNames = [...new Set(nd.roiWithCount.map(item => item.count))];
-                    //     uniqueNames.sort((a, b) => a - b);
-                    //     // console.log(uniqueNames)
-                    //     const strokeRange = Array.from({ length: uniqueNames.length }, (_, i) => 1 + i * 0.25);
-                    //     // console.log(strokeRange)
-                    //     const strokeWidthScale = d3.scaleOrdinal()
-                    //         .domain(uniqueNames)
-                    //         .range(strokeRange)
+                    if (nd.roi === 'rest') {
+                        const uniqueNames = [...new Set(nd.netWithCount.map(item => item.count))];
+                        uniqueNames.sort((a, b) => a - b);
+                        // console.log(uniqueNames)
+                        const strokeRange = Array.from({ length: uniqueNames.length }, (_, i) => 1 + i * 0.25);
+                        // console.log(strokeRange)
+                        const strokeWidthScale = d3.scaleOrdinal()
+                            .domain(uniqueNames)
+                            .range(strokeRange)
 
-                    //     // console.log(d3.select(`#roi_100`).node().getBBox());
-                    //     return (
-                    //         nd['roiWithCount'].map((each) => {
-                    //             // console.log(d3.select(`#roi_${each.source}`).node().getBBox())
-                    //             let source = rois.indexOf(each.source)
-                    //             let target = rois.indexOf(each.target)
-                    //             return (
-                    //                 <g className='aGroup'>
-                    //                     <defs>
-                    //                         <marker
-                    //                             id="arrow"
-                    //                             markerWidth="10"
-                    //                             markerHeight="10"
-                    //                             refX="0"
-                    //                             refY="3"
-                    //                             orient="auto"
-                    //                             markerUnits="strokeWidth"
+                        // console.log(d3.select(`#roi_100`).node().getBBox());
+                        return (
+                            showParagraph && nd.netWithCount.map((each, i) => {
+                                // console.log(each)
+                                // console.log(roiElectrode[each.source])
+                                // console.log(d3.select(`#el_${each.source}`).node().getBoundingClientRect())
+                                // console.log(d3.select(`#el_${each.target}`).node().getBoundingClientRect())
 
-                    //                         >
-                    //                             <path d="M0,0 L0,6 L9,3 z" fill="black" opacity={0.5} />
-                    //                         </marker>
-                    //                     </defs>
-                    //                     <line
-                    //                         x1={x[source]}
-                    //                         y1={y[source]}
-                    //                         x2={x[target]}
-                    //                         y2={y[target]}
-                    //                         stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)" strokeOpacity={0.4}
-                    //                     ></line><title>{`${+each.source} -> ${+each.target} = ${+each.count}`}</title>
-                    //                 </g>
-                    //             )
-                    //         })
-                    //     )
-                    // }
+                                let sourceroi = rois.indexOf(roiElectrode[each.source])
+                                let targetroi = rois.indexOf(roiElectrode[each.target])
+
+                                let sourceGroupPosition = [x[sourceroi], y[sourceroi]];
+                                let targetGroupPosition = [x[targetroi], y[targetroi]];
+
+                                // console.log(sourceGroupPosition, targetGroupPosition)
+
+                                let sourceBox = d3.select(`#el_${each.source}`).node().getBoundingClientRect()
+                                let targetBox = d3.select(`#el_${each.target}`).node().getBoundingClientRect()
+
+                                // { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+                                let source = [sourceBox.left + sourceBox.width / 2, sourceBox.top + sourceBox.height / 2]
+                                let target = [targetBox.left + targetBox.width / 2, targetBox.top + targetBox.height / 2]
+
+                                // let source = [sourceBox.x, sourceBox.y]
+                                // let target = [targetBox.x, targetBox.y]
+
+                                // translate(-280, 0)  === 0
+                                return (
+                                    <g className='aGroup' transform="translate(-280, 0)">
+                                        {/* <defs>
+                                            <marker
+                                                id="arrow"
+                                                markerWidth="10"
+                                                markerHeight="10"
+                                                refX="0"
+                                                refY="3"
+                                                orient="auto"
+                                                markerUnits="strokeWidth"
+
+                                            >
+                                                <path d="M0,0 L0,6 L9,3 z" fill="black" opacity={0.5} />
+                                            </marker>
+                                        </defs> */}
+                                        <line
+                                            x1={source[0]}
+                                            y1={source[1]}
+                                            x2={target[0]}
+                                            y2={target[1]}
+                                            stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)" strokeOpacity={0.4}
+                                        ></line><title>{`${+each.source} -> ${+each.target} = ${+each.count}`}</title>
+                                        {/* <path
+                                            stroke='grey'
+                                            fill='none'
+                                            d={d3.linkHorizontal()
+                                                .source(d => d.source)
+                                                .target(d => d.target)
+                                                (link)
+                                            }
+                                        /> */}
+                                    </g>
+                                )
+
+                            })
+                        )
+                    }
                     // else
                     if (nd.roi !== 'rest' && nd.network.length !== 0) {
                         // console.log(nd)
@@ -218,57 +250,74 @@ export const ChordContainerNetwork = ({ networkdata }) => {
                             // </svg>
                         )
                     }
-                    else {
-                        const uniqueNames = [...new Set(nd.roiWithCount.map(item => item.count))];
-                        uniqueNames.sort((a, b) => a - b);
-                        // console.log(uniqueNames)
-                        const strokeRange = Array.from({ length: uniqueNames.length }, (_, i) => 1 + i * 0.25);
-                        // console.log(strokeRange)
-                        const strokeWidthScale = d3.scaleOrdinal()
-                            .domain(uniqueNames)
-                            .range(strokeRange)
+                    // else {
+                    //     const uniqueNames = [...new Set(nd.roiWithCount.map(item => item.count))];
+                    //     uniqueNames.sort((a, b) => a - b);
+                    //     // console.log(uniqueNames)
+                    //     const strokeRange = Array.from({ length: uniqueNames.length }, (_, i) => 1 + i * 0.25);
+                    //     // console.log(strokeRange)
+                    //     const strokeWidthScale = d3.scaleOrdinal()
+                    //         .domain(uniqueNames)
+                    //         .range(strokeRange)
 
-                        // console.log(d3.select(`#roi_100`).node().getBBox());
-                        return (
-                            showParagraph && nd['network'].map((each) => {
-                                // console.log(d3.select(`#el_${each.source}`).node().getBoundingClientRect())
-                                let sourceBox = d3.select(`#el_${each.source}`).node().getBoundingClientRect()
-                                let targetBox = d3.select(`#el_${each.target}`).node().getBoundingClientRect()
-                                // { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
-                                let source = [sourceBox.left + sourceBox.width / 2, sourceBox.top + sourceBox.height / 2]
-                                let target = [targetBox.left + targetBox.width / 2, targetBox.top + targetBox.height / 2]
-                                return (
-                                    <g className='aGroup'>
-                                        <defs>
-                                            <marker
-                                                id="arrow"
-                                                markerWidth="10"
-                                                markerHeight="10"
-                                                refX="0"
-                                                refY="3"
-                                                orient="auto"
-                                                markerUnits="strokeWidth"
+                    //     // console.log(d3.select(`#roi_100`).node().getBBox());
+                    //     return (
+                    //         showParagraph && nd.netWithCount.slice(0, 1).map((each, i) => {
+                    //             console.log(each)
+                    //             console.log(nd.roiWithCount[i])
+                    //             console.log(d3.select(`#el_${each.source}`).node().getBoundingClientRect())
+                    //             console.log(d3.select(`#el_${each.target}`).node().getBoundingClientRect())
+                    //             let sourceBox = d3.select(`#el_${each.source}`).node().getBoundingClientRect()
+                    //             let targetBox = d3.select(`#el_${each.target}`).node().getBoundingClientRect()
+                    //             // { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+                    //             let source = [sourceBox.left - 15 + sourceBox.width / 2, sourceBox.top + sourceBox.height / 2]
+                    //             let target = [targetBox.left + 15 + targetBox.width / 2, targetBox.top + targetBox.height / 2]
 
-                                            >
-                                                <path d="M0,0 L0,6 L9,3 z" fill="black" opacity={0.5} />
-                                            </marker>
-                                        </defs>
-                                        <line
-                                            x1={source[0]}
-                                            y1={source[1]}
-                                            x2={target[0]}
-                                            y2={target[1]}
-                                            stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)" strokeOpacity={0.4}
-                                        ></line><title>{`${+each.source} -> ${+each.target} = ${+each.count}`}</title>
-                                    </g>
-                                )
-                            })
-                        )
-                    }
+                    //             // let source = [sourceBox.x, sourceBox.y]
+                    //             // let target = [targetBox.x, targetBox.y]
+
+                    //             return (
+                    //                 <g className='aGroup' transform="translate(-280, 0)">
+                    //                     <defs>
+                    //                         <marker
+                    //                             id="arrow"
+                    //                             markerWidth="10"
+                    //                             markerHeight="10"
+                    //                             refX="0"
+                    //                             refY="3"
+                    //                             orient="auto"
+                    //                             markerUnits="strokeWidth"
+
+                    //                         >
+                    //                             <path d="M0,0 L0,6 L9,3 z" fill="black" opacity={0.5} />
+                    //                         </marker>
+                    //                     </defs>
+                    //                     <line
+                    //                         x1={source[0]}
+                    //                         y1={source[1]}
+                    //                         x2={target[0]}
+                    //                         y2={target[1]}
+                    //                         stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)" strokeOpacity={0.4}
+                    //                     ></line><title>{`${+each.source} -> ${+each.target} = ${+each.count}`}</title>
+                    //                     {/* <path
+                    //                         stroke='grey'
+                    //                         fill='none'
+                    //                         d={d3.linkHorizontal()
+                    //                             .source(d => d.source)
+                    //                             .target(d => d.target)
+                    //                             (link)
+                    //                         }
+                    //                     /> */}
+                    //                 </g>
+                    //             )
+
+                    //         })
+                    //     )
+                    // }
                 })
             }
 
-        </svg>
+        </svg >
     )
 }
 

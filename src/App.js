@@ -13,7 +13,7 @@ function App() {
   const fullNetworkEvent = useFullNetworkPerEvent({ sample: sample })
 
   // console.log(fullNetwork)
-  // console.log(fullNetworkEvent)
+  console.log(fullNetworkEvent[91])
 
   function onSampleChange(event) {
     // let sampleName = event.target.value;
