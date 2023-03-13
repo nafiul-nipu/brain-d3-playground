@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Chordlink Hybrid Network</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+  </head>
+  <body>
+    <div id="chord1"></div>
+    <div id="chord2"></div>
+    <svg id="global-link"></svg>
+
+    <script>
+      // Define the data for chord1
+      const matrix1 = [
+        [11975, 5871, 8916, 2868],
+        [1951, 10048, 2060, 6171],
+        [8010, 16145, 8090, 8045],
+        [1013, 990, 940, 6907],
+      ];
+
+      // Define the data for chord2
+      const matrix2 = [
+        [100, 50, 10],
+        [20, 80, 30],
+        [10, 20, 90],
+      ];
+
+      // Define the configuration for the chord diagrams
+      const config = {
+        width: 400,
+        height: 400,
+        radius: Math.min(400, 400) * 0.5 - 10,
+        padAngle: 0.02,
+        colors: d3.schemeCategory10,
+      };
+
+      // Create chord1
+      const chord1 = d3
+        .chord()
+        .padAngle(config.padAngle)
+        .sortSubgroups(d3.descending)
+        .sortChords(d3.descending);
+
+      const chords1 = chord1(matrix1);
+
+      const arc1 = d3
+        .arc()
+        .innerRadius(config.radius)
+        .outerRadius(config.radius + 20);
+
+      const ribbon1 = d3.ribbon().radius(config.radius);
+
+      const svg1 = d3
+        .select("#chord1")
+        .append("svg")
+        .attr("width", config.width)
+        .attr("height", config.height)
+        .append("g")
+        .attr(
+          "transform",
+          `translate(${config.width / 2}, ${config.height / 2})`
+        )
+        .datum(chords1);
+
+      const group1 = svg1
+        .append("g")
+        .attr("class", "groups")
+        .selectAll("g")
+        .data(chords1.groups)
+        .enter()
+        .append("g");
+
+      group1
+        .append("path")
+        .style("fill", (d) => config.colors[d.index % 10])
+        .style("stroke", (d) => d3.rgb(config.colors[d.index % 10]).darker())
+        .attr("d", arc1);
+
+      const chordsGroup1 = svg1
+        .append("g")
+        .attr("class", "chords")
+        .selectAll("path")
+        .data(chords1)
+        .enter()
+        .append("path")
+        .attr("d", ribbon1)
+        .style("fill", (d) => config.colors[d.source.index % 10])
+        .style("stroke", (d) =>
+          d3.rgb(config.colors[d.source.index % 10]).darker()
+        )
+        .style("opacity", 0.7);
+
+      // Create chord2
+      const chord2 = d3
+        .chord()
+        .padAngle(config.padAngle)
+        .sortSubgroups(d3.descending)
+        .sortChords(d3.descending);
+
+      const chords2 = chord2(matrix2);
+
+      const arc2 = d3
+        .arc()
+        .innerRadius(config.radius + 30)
+        .outerRadius(config.radius + 50);
+
+      const ribbon2 = d3.ribbon().radius(config.radius + 30);
+
+      const svg2 = d3
+        .select("#chord2")
+        .append("svg")
+        .attr("width", config.width)
+        .attr("height", config.height)
+        .append("g")
+        .attr(
+          "transform",
+          `translate(${config.width / 2}, ${config.height / 2})`
+        )
+        .datum(chords2);
+
+      const group2 = svg2
+        .append("g")
+        .attr("class", "groups")
+        .selectAll("g")
+        .data(chords2.groups)
+        .enter()
+        .append("g");
+
+      group2
+        .append("path")
+        .style("fill", (d) => config.colors[d.index % 10])
+        .style("stroke", (d) => d3.rgb(config.colors[d.index % 10]).darker())
+        .attr("d", arc2);
+
+      const chordsGroup2 = svg2
+        .append("g")
+        .attr("class", "chords")
+        .selectAll("path")
+        .data(chords2)
+        .enter()
+        .append("path")
+        .attr("d", ribbon2)
+        .style("fill", (d) => config.colors[d.source.index % 10])
+        .style("stroke", (d) =>
+          d3.rgb(config.colors[d.source.index % 10]).darker()
+        )
+        .style("opacity", 0.7);
+
+      // Create global link between chord1 and chord2
+      const globalLink = d3
+        .select("#global-link")
+        .attr("width", config.width)
+        .attr("height", config.height);
+
+      const linkData = [
+        { source: { index: 1 }, target: { index: 2 } },
+        { source: { index: 2 }, target: { index: 2 } },
+        { source: { index: 3 }, target: { index: 0 } },
+        { source: { index: 0 }, target: { index: 1 } },
+        { source: { index: 2 }, target: { index: 2 } },
+      ];
+
+      const chord1GroupCenters = group1.nodes().map((node) => {
+        const rect = node.getBoundingClientRect();
+        return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      });
+
+      const chord2GroupCenters = group2.nodes().map((node) => {
+        const rect = node.getBoundingClientRect();
+        return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      });
+
+      const linkGenerator = d3
+        .linkHorizontal()
+        .source((d) => [d.source[1], d.source[0]])
+        .target((d) => [d.target[1], d.target[0]]);
+
+      globalLink
+        .selectAll("path")
+        .data(linkData)
+        .enter()
+        .append("path")
+        .attr("d", (d) => {
+          const source = chord1GroupCenters[d.source.index];
+          const target = chord2GroupCenters[d.target.index];
+          console.log(source, target);
+          const dx = target.x - source.x;
+          const dy = target.y - source.y;
+          const dr = Math.sqrt(dx * dx + dy * dy);
+          console.log(
+            linkGenerator({
+              source: [source.x, source.y],
+              target: [target.x, target.y],
+              controlPoint: [source.x + dr, source.y + dy * 0.6],
+            })
+          );
+          return linkGenerator({
+            source: [source.x, source.y],
+            target: [target.x, target.y],
+            controlPoint: [source.x + dr, source.y + dy * 0.6],
+          });
+        })
+        .style(".stroke", "gray")
+        .style(".fill", "none");
+    </script>
+  </body>
+</html>
