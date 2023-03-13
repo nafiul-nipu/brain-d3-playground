@@ -13,7 +13,7 @@ function App() {
   const fullNetworkEvent = useFullNetworkPerEvent({ sample: sample })
 
   // console.log(fullNetwork)
-  console.log(fullNetworkEvent[91])
+  // console.log(fullNetworkEvent[91])
 
   function onSampleChange(event) {
     // let sampleName = event.target.value;
@@ -33,7 +33,10 @@ function App() {
         </Col>
         <Col md='10' className='svg-container'>
           {/* <ChordContainer networkdata={fullNetwork} /> */}
-          <ChordContainerNetwork networkdata={fullNetwork} />
+          <ChordContainerNetwork
+            network={fullNetwork}
+            networkEvent={fullNetworkEvent[91]}
+          />
           <Brain className='bottom-svg' />
 
         </Col>
