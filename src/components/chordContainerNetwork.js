@@ -9,8 +9,11 @@ export const ChordContainerNetwork = ({ networkdata }) => {
     const [showParagraph, setShowParagraph] = useState(false);
 
     useEffect(() => {
-        console.log(networkdata)
-        setShowParagraph(true);
+        // console.log(networkdata)
+        if (networkdata) {
+            setShowParagraph(true);
+        }
+
     }, [networkdata]);
 
     if (!networkdata) {
@@ -115,7 +118,7 @@ export const ChordContainerNetwork = ({ networkdata }) => {
                                     // console.log(each)
                                     let textTransform = chordArc.centroid(each);
                                     return (
-                                        <g key={each.index} id={names[each.index]}>
+                                        <g key={each.index} id={`el_${names[each.index]}`}>
                                             <path
                                                 fill={color(names[each.index])}
                                                 d={chordArc(each)}
@@ -158,13 +161,14 @@ export const ChordContainerNetwork = ({ networkdata }) => {
                         )
                     }
                     else if (nd.roi !== 'rest') {
+                        // console.log()
                         let defaultValue = 10
                         // let data = nd.electrodes.map((e)=> )
                         const obj = nd.electrodes.reduce((acc, val) => {
                             acc[val] = defaultValue;
                             return acc;
                         }, {});
-                        // console.log(obj) 
+                        // console.log(obj)
                         var color = d3.scaleOrdinal()
                             .domain(Object.keys(obj))
                             .range(colorList)
@@ -187,7 +191,7 @@ export const ChordContainerNetwork = ({ networkdata }) => {
                                     // console.log(each)
                                     let textTransform = donArc.centroid(each);
                                     return (
-                                        <g key={i}>
+                                        <g key={i} id={`el_${each.data[0]}`}>
                                             <path
                                                 fill={color(each.index)}
                                                 d={donArc(each)}
@@ -226,10 +230,13 @@ export const ChordContainerNetwork = ({ networkdata }) => {
 
                         // console.log(d3.select(`#roi_100`).node().getBBox());
                         return (
-                            showParagraph && nd['roiWithCount'].map((each) => {
-                                console.log(d3.select(`#roi_${each.source}`).node().getBoundingClientRect())
-                                let source = rois.indexOf(each.source)
-                                let target = rois.indexOf(each.target)
+                            showParagraph && nd['network'].map((each) => {
+                                // console.log(d3.select(`#el_${each.source}`).node().getBoundingClientRect())
+                                let sourceBox = d3.select(`#el_${each.source}`).node().getBoundingClientRect()
+                                let targetBox = d3.select(`#el_${each.target}`).node().getBoundingClientRect()
+                                // { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+                                let source = [sourceBox.left + sourceBox.width / 2, sourceBox.top + sourceBox.height / 2]
+                                let target = [targetBox.left + targetBox.width / 2, targetBox.top + targetBox.height / 2]
                                 return (
                                     <g className='aGroup'>
                                         <defs>
@@ -247,10 +254,10 @@ export const ChordContainerNetwork = ({ networkdata }) => {
                                             </marker>
                                         </defs>
                                         <line
-                                            x1={x[source]}
-                                            y1={y[source]}
-                                            x2={x[target]}
-                                            y2={y[target]}
+                                            x1={source[0]}
+                                            y1={source[1]}
+                                            x2={target[0]}
+                                            y2={target[1]}
                                             stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)" strokeOpacity={0.4}
                                         ></line><title>{`${+each.source} -> ${+each.target} = ${+each.count}`}</title>
                                     </g>

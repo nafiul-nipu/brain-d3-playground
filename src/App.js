@@ -5,6 +5,7 @@ import { ReactComponent as Brain } from './data/brain.svg';
 import { useState } from 'react';
 import { useFullNetwork } from './components/useFullNetwork';
 import { useFullNetworkPerEvent } from './components/useFullNetworkEvent';
+import { ChordContainerNetwork } from './components/chordContainerNetwork';
 
 function App() {
   const [sample, selectedSample] = useState('sample1')
@@ -31,7 +32,8 @@ function App() {
 
         </Col>
         <Col md='10' className='svg-container'>
-          <ChordContainer networkdata={fullNetwork} />
+          {/* <ChordContainer networkdata={fullNetwork} /> */}
+          <ChordContainerNetwork networkdata={fullNetwork} />
           <Brain className='bottom-svg' />
 
         </Col>
