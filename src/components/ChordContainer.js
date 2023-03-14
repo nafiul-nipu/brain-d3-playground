@@ -6,13 +6,13 @@ const regions = ["R. Frontal Lobe", "L. Frontal Lobe", "L. Parietal Lobe", "R. T
     "R. Occipital Lobe", "L. Occipital Lobe", "L. Insula"]
 
 export const ChordContainer = ({ networkdata }) => {
-    if (!networkdata) {
-        return (<div>data loading</div>)
-    }
+    // if (!networkdata) {
+    //     return (<div>data loading</div>)
+    // }
 
     const rois = [100, 101, 201, 300, 301, 400, 401, 501]
 
-    console.log(networkdata)
+    // console.log(networkdata)
     const colorList = ["#c4c4c4", "#69b40f", "#ec1d25", "#c8125c", "#008fc8", "#10218b", "#134b24", "#737373"]
 
     const height = 350;
