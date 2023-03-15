@@ -18,9 +18,12 @@ function App() {
 
   const [eventData, setEventData] = useState(null)
 
+  const [showParagraph, setShowParagraph] = useState(false);
+
   const handleOptionChange = (event) => {
     if (event.target.value === 'container') {
       setIsNetworkActive(false)
+      setShowParagraph(false)
     } else {
       setIsNetworkActive(true)
     }
@@ -30,10 +33,12 @@ function App() {
   function onSampleChange(event) {
     // let sampleName = event.target.value;
     selectedSample(event.target.value)
+    setShowParagraph(false)
   }
 
   function handleEventDropDown(event) {
     setEventData(fullNetworkEvent[event.target.value])
+    setShowParagraph(false)
     setSelectedKey(event.target.value)
 
   }
@@ -92,6 +97,9 @@ function App() {
               network={fullNetwork}
               networkEvent={eventData}
               eventKey={selectedKey}
+              showParagraph={showParagraph}
+              setShowParagraph={setShowParagraph}
+              sample={sample}
             />
           )}
           <Brain className='bottom-svg' />

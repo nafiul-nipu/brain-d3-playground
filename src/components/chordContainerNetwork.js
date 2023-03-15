@@ -6,18 +6,18 @@ import roiElectrode from '../data/roi-electrode.json'
 const regions = ["R. Frontal Lobe", "L. Frontal Lobe", "L. Parietal Lobe", "R. Temporal Lobe", "L. Temporal Lobe",
     "R. Occipital Lobe", "L. Occipital Lobe", "L. Insula"]
 
-export const ChordContainerNetwork = ({ network, networkEvent, eventKey }) => {
-    const [showParagraph, setShowParagraph] = useState(false);
+export const ChordContainerNetwork = ({ showParagraph, setShowParagraph, network, networkEvent, eventKey, sample }) => {
+
 
     useEffect(() => {
         console.log("inside useEffect2")
         // console.log(networkdata)
         // if (network || networkEvent || eventKey) {
-            // setShowParagraph(false)
-            setShowParagraph(true);
+        // setShowParagraph(false)
+        setShowParagraph(true);
         // }
 
-    }, [eventKey]);    
+    }, [eventKey, sample]);
 
     console.log(showParagraph)
 
@@ -79,13 +79,13 @@ export const ChordContainerNetwork = ({ network, networkEvent, eventKey }) => {
             <g>
                 {
                     networkdata.map((nd, i) => {
-            
+
                         if (nd.roi === 'rest') {
                             const uniqueNames = [...new Set(nd.netWithCount.map(item => item.count))];
                             uniqueNames.sort((a, b) => a - b);
-                      
+
                             const strokeRange = Array.from({ length: uniqueNames.length }, (_, i) => 1 + i * 0.25);
-                         
+
                             const strokeWidthScale = d3.scaleOrdinal()
                                 .domain(uniqueNames)
                                 .range(strokeRange)
@@ -120,118 +120,118 @@ export const ChordContainerNetwork = ({ network, networkEvent, eventKey }) => {
                             )
                         }
                         else
-                        if (nd.roi !== 'rest' && nd.network.length !== 0) {
-                            // console.log(nd)
-                            let data = Object.assign(nd.matrix, { names: nd["electrodes"], colors: colorList })
-                            const chords = chord(data)
-                            // console.log(data)
-                            // console.log(chords)
-                            const names = data.names === undefined ? d3.range(data.length) : data.names
-                            const colors = data.colors === undefined ? d3.quantize(d3.interpolateRainbow, names.length) : data.colors
-                            const color = d3.scaleOrdinal(names, colors)
-                            return (
-                                // <svg width={width} height={height}>
-                                <g transform={`translate(${x[i]}, ${y[i]})`} id={`roi_${nd.roi}`}>
-                                    {chords.groups.map((each) => {
-                                        // console.log(chordArc())
-                                        // console.log(each)
-                                        let textTransform = chordArc.centroid(each);
-                                        return (
-                                            <g key={each.index} >
-                                                <path
-                                                    fill={color(names[each.index])}
-                                                    d={chordArc(each)}
-                                                /><title>{`${names[each.index]}
+                            if (nd.roi !== 'rest' && nd.network.length !== 0) {
+                                // console.log(nd)
+                                let data = Object.assign(nd.matrix, { names: nd["electrodes"], colors: colorList })
+                                const chords = chord(data)
+                                // console.log(data)
+                                // console.log(chords)
+                                const names = data.names === undefined ? d3.range(data.length) : data.names
+                                const colors = data.colors === undefined ? d3.quantize(d3.interpolateRainbow, names.length) : data.colors
+                                const color = d3.scaleOrdinal(names, colors)
+                                return (
+                                    // <svg width={width} height={height}>
+                                    <g transform={`translate(${x[i]}, ${y[i]})`} id={`roi_${nd.roi}`}>
+                                        {chords.groups.map((each) => {
+                                            // console.log(chordArc())
+                                            // console.log(each)
+                                            let textTransform = chordArc.centroid(each);
+                                            return (
+                                                <g key={each.index} >
+                                                    <path
+                                                        fill={color(names[each.index])}
+                                                        d={chordArc(each)}
+                                                    /><title>{`${names[each.index]}
                                                 ${(each.value)}`}</title>
-                                                <text
-                                                    id={`el_${names[each.index]}`}
-                                                    transform={`translate(${textTransform[0] * textPadding}, ${textTransform[1] * textPadding})`}
-                                                    // x={2}
-                                                    dy='0.35em'
-                                                    // fontWeight={'bold'}
-                                                    fontSize='0.75em'
-                                                    textAnchor={'middle'}
-                                                >
-                                                    {names[each.index]}
-                                                </text>
+                                                    <text
+                                                        id={`el_${names[each.index]}`}
+                                                        transform={`translate(${textTransform[0] * textPadding}, ${textTransform[1] * textPadding})`}
+                                                        // x={2}
+                                                        dy='0.35em'
+                                                        // fontWeight={'bold'}
+                                                        fontSize='0.75em'
+                                                        textAnchor={'middle'}
+                                                    >
+                                                        {names[each.index]}
+                                                    </text>
 
-                                            </g>
-                                        )
-                                    })}
-                                    {chords.map((each, i) => {
-                                        return (
-                                            <g fillOpacity={0.8} key={i} >
-                                                <path
-                                                    style={{ mixBlendMode: 'multiply' }}
-                                                    fill={color(names[each.source.index])}
-                                                    d={ribbon(each)}
-                                                /><title>{`E${names[each.source.index]} → E${names[each.target.index]} = ${(each.source.value)}`}</title>
-                                            </g>
-                                        )
-                                    })}
+                                                </g>
+                                            )
+                                        })}
+                                        {chords.map((each, i) => {
+                                            return (
+                                                <g fillOpacity={0.8} key={i} >
+                                                    <path
+                                                        style={{ mixBlendMode: 'multiply' }}
+                                                        fill={color(names[each.source.index])}
+                                                        d={ribbon(each)}
+                                                    /><title>{`E${names[each.source.index]} → E${names[each.target.index]} = ${(each.source.value)}`}</title>
+                                                </g>
+                                            )
+                                        })}
 
-                                    <text
-                                        transform={`translate(${textPadding}, ${textPadding * 115})`}
-                                        fontWeight={'bold'}
-                                    >{regions[i]}</text>
-                                </g>
+                                        <text
+                                            transform={`translate(${textPadding}, ${textPadding * 115})`}
+                                            fontWeight={'bold'}
+                                        >{regions[i]}</text>
+                                    </g>
 
-                                // </svg>
+                                    // </svg>
 
-                            )
-                        }
-                        else if (nd.roi !== 'rest') {
-                            // console.log()
-                            let defaultValue = 10
-                            // let data = nd.electrodes.map((e)=> )
-                            const obj = nd.electrodes.reduce((acc, val) => {
-                                acc[val] = defaultValue;
-                                return acc;
-                            }, {});
-                            // console.log(obj)
-                            var color = d3.scaleOrdinal()
-                                .domain(Object.keys(obj))
-                                .range(colorList)
+                                )
+                            }
+                            else if (nd.roi !== 'rest') {
+                                // console.log()
+                                let defaultValue = 10
+                                // let data = nd.electrodes.map((e)=> )
+                                const obj = nd.electrodes.reduce((acc, val) => {
+                                    acc[val] = defaultValue;
+                                    return acc;
+                                }, {});
+                                // console.log(obj)
+                                var color = d3.scaleOrdinal()
+                                    .domain(Object.keys(obj))
+                                    .range(colorList)
 
-                            var pie = d3.pie()
-                                .value(function (d) { return d[1]; })
-                            var data_ready = pie(Object.entries(obj))
-                            
-                            return (
-                                // <svg width={width} height={height}>
-                                <g transform={`translate(${x[i]}, ${y[i]})`} id={`roi_${nd.roi}`}>
-                                    {data_ready.map((each, i) => {
-                                        // console.log(each)
-                                        let textTransform = donArc.centroid(each);
-                                        return (
-                                            <g key={i}>
-                                                <path
-                                                    fill={color(each.index)}
-                                                    d={donArc(each)}
-                                                /><title>{`E${+each.data[0]}`}</title>
-                                                <text
-                                                    id={`el_${each.data[0]}`}
-                                                    transform={`translate(${textTransform[0] * textPadding}, ${textTransform[1] * textPadding})`}
-                                                    // x={2}
-                                                    dy='0.35em'
-                                                    fontSize='0.85em'
-                                                    // fontWeight={'bold'}
-                                                    textAnchor={'middle'}
-                                                >
-                                                    {+each.data[0]}
-                                                </text>
+                                var pie = d3.pie()
+                                    .value(function (d) { return d[1]; })
+                                var data_ready = pie(Object.entries(obj))
 
-                                            </g>
-                                        )
-                                    })}
-                                    <text
-                                        transform={`translate(${textPadding}, ${textPadding * 115})`}
-                                        fontWeight={'bold'}
-                                    >{regions[i]}</text>
-                                </g>
-                                // </svg>
-                            )
-                        }
+                                return (
+                                    // <svg width={width} height={height}>
+                                    <g transform={`translate(${x[i]}, ${y[i]})`} id={`roi_${nd.roi}`}>
+                                        {data_ready.map((each, i) => {
+                                            // console.log(each)
+                                            let textTransform = donArc.centroid(each);
+                                            return (
+                                                <g key={i}>
+                                                    <path
+                                                        fill={color(each.index)}
+                                                        d={donArc(each)}
+                                                    /><title>{`E${+each.data[0]}`}</title>
+                                                    <text
+                                                        id={`el_${each.data[0]}`}
+                                                        transform={`translate(${textTransform[0] * textPadding}, ${textTransform[1] * textPadding})`}
+                                                        // x={2}
+                                                        dy='0.35em'
+                                                        fontSize='0.85em'
+                                                        // fontWeight={'bold'}
+                                                        textAnchor={'middle'}
+                                                    >
+                                                        {+each.data[0]}
+                                                    </text>
+
+                                                </g>
+                                            )
+                                        })}
+                                        <text
+                                            transform={`translate(${textPadding}, ${textPadding * 115})`}
+                                            fontWeight={'bold'}
+                                        >{regions[i]}</text>
+                                    </g>
+                                    // </svg>
+                                )
+                            }
                     })
                 }
             </g>
