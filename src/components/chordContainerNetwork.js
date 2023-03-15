@@ -10,12 +10,16 @@ export const ChordContainerNetwork = ({ network, networkEvent, eventKey }) => {
     const [showParagraph, setShowParagraph] = useState(false);
 
     useEffect(() => {
+        console.log("inside useEffect2")
         // console.log(networkdata)
         // if (network || networkEvent || eventKey) {
+            // setShowParagraph(false)
             setShowParagraph(true);
         // }
 
-    }, []);
+    }, [eventKey]);    
+
+    console.log(showParagraph)
 
     let networkdata;
 
@@ -89,10 +93,6 @@ export const ChordContainerNetwork = ({ network, networkEvent, eventKey }) => {
                             return (
                                 showParagraph && nd.netWithCount.map((each, i) => {
 
-
-                                    let sourceroi = rois.indexOf(roiElectrode[each.source])
-                                    let targetroi = rois.indexOf(roiElectrode[each.target])
-
                                     let sourceBox = d3.select(`#el_${each.source}`).node().getBoundingClientRect()
                                     let targetBox = d3.select(`#el_${each.target}`).node().getBoundingClientRect()
 
@@ -124,8 +124,8 @@ export const ChordContainerNetwork = ({ network, networkEvent, eventKey }) => {
                             // console.log(nd)
                             let data = Object.assign(nd.matrix, { names: nd["electrodes"], colors: colorList })
                             const chords = chord(data)
-                            console.log(data)
-                            console.log(chords)
+                            // console.log(data)
+                            // console.log(chords)
                             const names = data.names === undefined ? d3.range(data.length) : data.names
                             const colors = data.colors === undefined ? d3.quantize(d3.interpolateRainbow, names.length) : data.colors
                             const color = d3.scaleOrdinal(names, colors)
@@ -201,7 +201,7 @@ export const ChordContainerNetwork = ({ network, networkEvent, eventKey }) => {
                                 // <svg width={width} height={height}>
                                 <g transform={`translate(${x[i]}, ${y[i]})`} id={`roi_${nd.roi}`}>
                                     {data_ready.map((each, i) => {
-                                        console.log(each)
+                                        // console.log(each)
                                         let textTransform = donArc.centroid(each);
                                         return (
                                             <g key={i}>
