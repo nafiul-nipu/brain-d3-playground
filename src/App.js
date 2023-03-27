@@ -7,6 +7,7 @@ import { useFullNetwork } from './components/useFullNetwork';
 import { useFullNetworkPerEvent } from './components/useFullNetworkEvent';
 import { ChordContainerNetwork } from './components/chordContainerNetwork';
 import { AdjacencyMatrix } from './components/AdjacencyMatrix';
+import { AdjacencyContainer } from './components/AdjacencyContainer';
 
 function App() {
   const [sample, selectedSample] = useState('sample1')
@@ -104,7 +105,8 @@ function App() {
             />
           )}
           <Brain className='bottom-svg' /> */}
-          <AdjacencyMatrix />
+          {/* <AdjacencyMatrix /> */}
+          {fullNetwork ? <AdjacencyContainer networkdata={fullNetwork} /> : null}
 
         </Col>
 
