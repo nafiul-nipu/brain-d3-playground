@@ -14,7 +14,6 @@ export const AdjacencyMatrix = (props) => {
             matrix[i][j] = Math.random() * 2;
         }
     }
-    console.log(matrix);
     let categories = [0, 1, 2, 3, 4];
 
     let x = d3.scaleBand()
@@ -35,7 +34,6 @@ export const AdjacencyMatrix = (props) => {
         <svg width={width} height={height}>
             {
                 matrix.map((row, i) => {
-                    console.log(i)
                     return (
                         row.map((col, j) => {
                             return (
