@@ -23,8 +23,9 @@ export const AdjacencyContainer = ({ networkdata }) => {
     const base = width / 2
     const hB = height / 2
     // console.log(base, hB)
-    const x = [base + (base * 3), base + 260, base + 280, base - 30, base + 650, base + 450, base + 100, base - 20]
-    const y = [hB, hB, hB + 300, hB + 300, hB + 300, hB + 600, hB + 600, hB + 50]
+    // const rois = [100, 101, 201, 300, 301, 400, 401, 501]
+    const x = [base + (base * 2), base + 80, base + 280, base - 30, base + 650, base + 450, base + 100, base - 180]
+    const y = [hB - 175, hB - 175, hB + 300, hB + 300, hB + 300, hB + 600, hB + 600, hB - 125]
 
 
     return (
@@ -78,7 +79,7 @@ export const AdjacencyContainer = ({ networkdata }) => {
                     }
 
                     else {
-                        console.log(nd)
+                        // console.log(nd)
                         let matrix = nd.matrix;
                         let max_val = d3.max(matrix, d => d3.max(d))
                         color.domain([0, max_val])
