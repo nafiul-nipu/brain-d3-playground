@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useFullNetwork } from './components/useFullNetwork';
 import { useFullNetworkPerEvent } from './components/useFullNetworkEvent';
 import { ChordContainerNetwork } from './components/chordContainerNetwork';
+import { AdjacencyMatrix } from './components/AdjacencyMatrix';
 
 function App() {
   const [sample, selectedSample] = useState('sample1')
@@ -90,7 +91,7 @@ function App() {
 
         </Col>
         <Col md='10' className='svg-container'>
-          {selectedOption === 'container' ? (
+          {/* {selectedOption === 'container' ? (
             <ChordContainer networkdata={fullNetwork} />
           ) : (
             <ChordContainerNetwork
@@ -102,7 +103,8 @@ function App() {
               sample={sample}
             />
           )}
-          <Brain className='bottom-svg' />
+          <Brain className='bottom-svg' /> */}
+          <AdjacencyMatrix />
 
         </Col>
 
