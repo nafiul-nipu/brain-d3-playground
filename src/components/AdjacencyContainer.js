@@ -85,19 +85,19 @@ export const AdjacencyContainer = ({ networkdata }) => {
                         color.domain([0, max_val])
                         const categories = [...Array(nd.electrodes.length).keys()];
                         xScale.domain(categories);
-                        yScale.domain(categories);
+                        yScale.domain([...categories].reverse());
                         return (
 
                             <g transform={`translate(${x[i]}, ${y[i]})`} id={`roi_${nd.roi}`}>
                                 {
-                                    matrix.map((row, i) => {
+                                    matrix.map((row, index) => {
                                         return (
                                             row.map((col, j) => {
                                                 return (
                                                     <g>
                                                         <rect
-                                                            key={i + "-" + j}
-                                                            x={xScale(i)}
+                                                            key={index + "-" + j}
+                                                            x={xScale(index)}
                                                             y={yScale(j)}
                                                             width={xScale.bandwidth()}
                                                             height={yScale.bandwidth()}
