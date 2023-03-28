@@ -106,7 +106,7 @@ function App() {
           )}
           <Brain className='bottom-svg' />
           {/* <AdjacencyMatrix /> */}
-          {fullNetwork ? <AdjacencyContainer networkdata={fullNetwork} /> : null}
+          {/* {fullNetwork ? <AdjacencyContainer networkdata={fullNetwork} /> : null} */}
 
         </Col>
 
