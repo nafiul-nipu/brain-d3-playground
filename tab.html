@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chrome-like Tab</title>
+    <style>
+      .tab-container {
+        display: flex;
+      }
+
+      .tab {
+        padding: 10px;
+        margin-right: 10px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        border-bottom: none;
+        border-radius: 5px 5px 0 0;
+        background-color: #eee;
+      }
+
+      .tab.active {
+        background-color: #fff;
+        border-color: #ccc;
+        border-bottom: none;
+      }
+
+      .tab-content-container {
+        border: 1px solid #ccc;
+        border-radius: 0 5px 5px 5px;
+        background-color: #fff;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 10px;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tab-container">
+      <div class="tab active" data-tab="tab1">Tab 1</div>
+      <div class="tab" data-tab="tab2">Tab 2</div>
+    </div>
+
+    <div class="tab-content-container">
+      <div class="tab-content active" data-tab="tab1">
+        <p>Tab 1 content goes here</p>
+      </div>
+      <div class="tab-content" data-tab="tab2">
+        <p>Tab 2 content goes here</p>
+      </div>
+    </div>
+  </body>
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const activeTab = document.querySelector(".tab.active");
+        const activeTabContent = document.querySelector(".tab-content.active");
+
+        activeTab.classList.remove("active");
+        activeTabContent.classList.remove("active");
+
+        const dataTab = tab.dataset.tab;
+        const newActiveTabContent = document.querySelector(
+          `.tab-content[data-tab="${dataTab}"]`
+        );
+
+        tab.classList.add("active");
+        newActiveTabContent.classList.add("active");
+      });
+    });
+  </script>
+</html>
