@@ -92,7 +92,7 @@ function App() {
 
         </Col>
         <Col md='10' className='svg-container'>
-          {selectedOption === 'container' ? (
+          {/* {selectedOption === 'container' ? (
             <ChordContainer networkdata={fullNetwork} />
           ) : (
             <ChordContainerNetwork
@@ -103,10 +103,10 @@ function App() {
               setShowParagraph={setShowParagraph}
               sample={sample}
             />
-          )}
+          )} */}
           <Brain className='bottom-svg' />
           {/* <AdjacencyMatrix /> */}
-          {/* {fullNetwork ? <AdjacencyContainer networkdata={fullNetwork} /> : null} */}
+          {fullNetwork ? <AdjacencyContainer networkdata={fullNetwork} /> : null}
 
         </Col>
 

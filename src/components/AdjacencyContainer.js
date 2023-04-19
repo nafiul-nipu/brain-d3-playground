@@ -34,48 +34,48 @@ export const AdjacencyContainer = ({ networkdata }) => {
                 networkdata.map((nd, i) => {
                     // console.log(nd)
                     if (nd.roi === 'rest') {
-                        const uniqueNames = [...new Set(nd.roiWithCount.map(item => item.count))];
-                        uniqueNames.sort((a, b) => a - b);
-                        // console.log(uniqueNames)
-                        const strokeRange = Array.from({ length: uniqueNames.length }, (_, i) => 1 + i * 0.25);
-                        // console.log(strokeRange)
-                        const strokeWidthScale = d3.scaleOrdinal()
-                            .domain(uniqueNames)
-                            .range(strokeRange)
+                        // const uniqueNames = [...new Set(nd.roiWithCount.map(item => item.count))];
+                        // uniqueNames.sort((a, b) => a - b);
+                        // // console.log(uniqueNames)
+                        // const strokeRange = Array.from({ length: uniqueNames.length }, (_, i) => 1 + i * 0.25);
+                        // // console.log(strokeRange)
+                        // const strokeWidthScale = d3.scaleOrdinal()
+                        //     .domain(uniqueNames)
+                        //     .range(strokeRange)
 
-                        // console.log(d3.select(`#roi_100`).node().getBBox());
-                        return (
-                            nd['roiWithCount'].map((each) => {
-                                // console.log(d3.select(`#roi_${each.source}`).node().getBBox())
-                                let source = rois.indexOf(each.source)
-                                let target = rois.indexOf(each.target)
-                                return (
-                                    <g className='aGroup'>
-                                        <defs>
-                                            <marker
-                                                id="arrow"
-                                                markerWidth="10"
-                                                markerHeight="10"
-                                                refX="0"
-                                                refY="3"
-                                                orient="auto"
-                                                markerUnits="strokeWidth"
+                        // // console.log(d3.select(`#roi_100`).node().getBBox());
+                        // return (
+                        //     nd['roiWithCount'].map((each) => {
+                        //         // console.log(d3.select(`#roi_${each.source}`).node().getBBox())
+                        //         let source = rois.indexOf(each.source)
+                        //         let target = rois.indexOf(each.target)
+                        //         return (
+                        //             <g className='aGroup'>
+                        //                 <defs>
+                        //                     <marker
+                        //                         id="arrow"
+                        //                         markerWidth="10"
+                        //                         markerHeight="10"
+                        //                         refX="0"
+                        //                         refY="3"
+                        //                         orient="auto"
+                        //                         markerUnits="strokeWidth"
 
-                                            >
-                                                <path d="M0,0 L0,6 L9,3 z" fill="black" opacity={0.5} />
-                                            </marker>
-                                        </defs>
-                                        <line
-                                            x1={x[source]}
-                                            y1={y[source]}
-                                            x2={x[target]}
-                                            y2={y[target]}
-                                            stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)" strokeOpacity={0.4}
-                                        ></line><title>{`${+each.source} -> ${+each.target} = ${+each.count}`}</title>
-                                    </g>
-                                )
-                            })
-                        )
+                        //                     >
+                        //                         <path d="M0,0 L0,6 L9,3 z" fill="black" opacity={0.5} />
+                        //                     </marker>
+                        //                 </defs>
+                        //                 <line
+                        //                     x1={x[source]}
+                        //                     y1={y[source]}
+                        //                     x2={x[target]}
+                        //                     y2={y[target]}
+                        //                     stroke="black" strokeWidth={strokeWidthScale(each.count)} markerEnd="url(#arrow)" strokeOpacity={0.4}
+                        //                 ></line><title>{`${+each.source} -> ${+each.target} = ${+each.count}`}</title>
+                        //             </g>
+                        //         )
+                        //     })
+                        // )
                     }
 
                     else {
