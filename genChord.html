@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chord Diagram with Gene Movements</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      /* Add styling as needed */
+      .gene-line {
+        fill: none;
+        stroke: #999;
+        stroke-width: 1px;
+      }
+      .gene-label {
+        font-size: 10px;
+        fill: #333;
+        pointer-events: none;
+      }
+      .tooltip {
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        pointer-events: none;
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tooltip" id="tooltip"></div>
+    <script>
+      // Example data (replace with your actual data)
+      var beforegroupdata = [
+        { inner: ["geneA", "geneB"] },
+        { middle: ["geneC", "geneD"] },
+        { outer: ["geneE"] },
+      ];
+
+      var aftergroupdata = [
+        { inner: ["geneB"] },
+        { middle: ["geneC", "geneD", "geneF"] },
+        { outer: ["geneE", "geneA"] },
+      ];
+
+      // Extract gene lists from beforegroupdata and aftergroupdata
+      var beforeGenes = beforegroupdata
+        .map((group) => Object.values(group)[0])
+        .flat(); // flatten array
+      var afterGenes = aftergroupdata
+        .map((group) => Object.values(group)[0])
+        .flat(); // flatten array
+
+      // Create array to store individual gene movements
+      var geneMovements = [];
+
+      // Find gene movements
+      beforeGenes.forEach((gene) => {
+        var beforeGroupName = beforegroupdata.find((group) =>
+          group[Object.keys(group)[0]].includes(gene)
+        );
+        var afterGroupName = aftergroupdata.find((group) =>
+          group[Object.keys(group)[0]].includes(gene)
+        );
+        if (beforeGroupName && afterGroupName) {
+          geneMovements.push({
+            gene: gene,
+            beforeGroup: Object.keys(beforeGroupName)[0],
+            afterGroup: Object.keys(afterGroupName)[0],
+          });
+        }
+      });
+
+      // Set up D3.js variables
+      var width = 600;
+      var height = 600;
+
+      var svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+      var ribbon = d3.ribbon().radius(250);
+
+      var radius = 250;
+      var outerPadding = 20;
+      var innerPadding = 0.05;
+
+      // Add lines and labels for gene movements
+      svg
+        .append("g")
+        .selectAll("path")
+        .data(geneMovements)
+        .enter()
+        .append("path")
+        .attr("class", "gene-line")
+        .attr("d", (d) => {
+          var source = {
+            index: beforeGenes.indexOf(d.gene),
+            startAngle:
+              (beforeGenes.indexOf(d.gene) / beforeGenes.length) * 2 * Math.PI,
+            endAngle:
+              (beforeGenes.indexOf(d.gene) / beforeGenes.length) * 2 * Math.PI,
+          };
+          var target = {
+            index: afterGenes.indexOf(d.gene),
+            startAngle:
+              (afterGenes.indexOf(d.gene) / afterGenes.length) * 2 * Math.PI,
+            endAngle:
+              (afterGenes.indexOf(d.gene) / afterGenes.length) * 2 * Math.PI,
+          };
+          return ribbon({
+            source: ribbonSource(source),
+            target: ribbonSource(target),
+          });
+        })
+        .on("mouseover", function (event, d) {
+          tooltip.style.visibility = "visible";
+          tooltip.innerHTML = `<strong>${d.gene}</strong><br>From: ${d.beforeGroup}<br>To: ${d.afterGroup}`;
+        })
+        .on("mousemove", function (event) {
+          tooltip.style.left = event.pageX + 10 + "px";
+          tooltip.style.top = event.pageY - 10 + "px";
+        })
+        .on("mouseout", function () {
+          tooltip.style.visibility = "hidden";
+        });
+
+      svg
+        .append("g")
+        .selectAll("text")
+        .data(geneMovements)
+        .enter()
+        .append("text")
+        .attr("class", "gene-label")
+        .attr("dy", -5)
+        .append("textPath")
+        .attr("startOffset", "50%")
+        .style("text-anchor", "middle")
+        .attr("xlink:href", (d, i) => `#gene-label-path-${i}`)
+        .text((d) => d.gene);
+
+      svg
+        .append("g")
+        .selectAll("path")
+        .data(geneMovements)
+        .enter()
+        .append("path")
+        .attr("id", (d, i) => `gene-label-path-${i}`)
+        .attr("d", (d) => {
+          var source = {
+            index: beforeGenes.indexOf(d.gene),
+            startAngle:
+              (beforeGenes.indexOf(d.gene) / beforeGenes.length) * 2 * Math.PI,
+            endAngle:
+              (beforeGenes.indexOf(d.gene) / beforeGenes.length) * 2 * Math.PI,
+          };
+          var target = {
+            index: afterGenes.indexOf(d.gene),
+            startAngle:
+              (afterGenes.indexOf(d.gene) / afterGenes.length) * 2 * Math.PI,
+            endAngle:
+              (afterGenes.indexOf(d.gene) / afterGenes.length) * 2 * Math.PI,
+          };
+          return ribbon({
+            source: ribbonSource(source),
+            target: ribbonSource(target),
+          });
+        })
+        .style("fill", "none");
+
+      function ribbonSource(d) {
+        return circleEdge(d, -1);
+      }
+
+      function circleEdge(d, sign) {
+        var r = radius + outerPadding * (d.index === -1 ? innerPadding : 1);
+        var a = d.startAngle + d.endAngle;
+        var y = Math.sin(a) * r;
+        var x = Math.cos(a) * r * sign;
+        return { startAngle: x, endAngle: y };
+      }
+
+      var tooltip = document.getElementById("tooltip");
+    </script>
+  </body>
+</html>

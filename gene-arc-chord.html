@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D3.js Chord Diagram with Correct Ribbons Tooltip</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .tooltip {
+        position: absolute;
+        text-align: center;
+        padding: 6px;
+        font: 12px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <svg id="chord-svg"></svg>
+
+    <script>
+      // Custom beforegroupdata
+      const beforegroupdata = [
+        { inner: ["geneA", "geneB", "geneC", "geneD", "geneE"] },
+        { middle: ["geneF", "geneG", "geneH"] },
+        { outer: ["geneI", "geneJ", "geneK", "geneL"] },
+      ];
+
+      // Custom aftergroupdata (simulating some movement)
+      const aftergroupdata = [
+        { inner: ["geneA", "geneF"] },
+        { middle: ["geneB", "geneG", "geneH", "geneK"] },
+        { outer: ["geneC", "geneD", "geneE", "geneI", "geneJ", "geneL"] },
+      ];
+
+      // Extract unique genes
+      let allGenes = new Set();
+      beforegroupdata.forEach((group) => {
+        Object.values(group).forEach((genes) =>
+          genes.forEach((gene) => allGenes.add(gene))
+        );
+      });
+      aftergroupdata.forEach((group) => {
+        Object.values(group).forEach((genes) =>
+          genes.forEach((gene) => allGenes.add(gene))
+        );
+      });
+      allGenes = Array.from(allGenes);
+
+      // Initialize chord matrix
+      const matrix = [];
+      const groups = ["inner", "middle", "outer"];
+      groups.forEach((group, i) => {
+        const row = [];
+        groups.forEach((group, j) => {
+          row.push(0);
+        });
+        matrix.push(row);
+      });
+
+      // Fill chord matrix with movements
+      allGenes.forEach((gene) => {
+        let beforeIndex, afterIndex;
+
+        // Find indices for beforegroupdata
+        groups.forEach((group, i) => {
+          if (
+            beforegroupdata[i][group] &&
+            beforegroupdata[i][group].includes(gene)
+          ) {
+            beforeIndex = i;
+          }
+        });
+
+        // Find indices for aftergroupdata
+        groups.forEach((group, i) => {
+          if (
+            aftergroupdata[i][group] &&
+            aftergroupdata[i][group].includes(gene)
+          ) {
+            afterIndex = i;
+          }
+        });
+
+        if (beforeIndex !== undefined && afterIndex !== undefined) {
+          matrix[beforeIndex][afterIndex]++;
+        }
+      });
+
+      // Set dimensions for the SVG container
+      const width = 600;
+      const height = 400;
+      const outerRadius = Math.min(width, height) * 0.5 - 40;
+      const innerRadius = outerRadius - 30;
+
+      // Define colors for groups
+      const color = d3
+        .scaleOrdinal()
+        .domain(groups)
+        .range(["#98abc5", "#8a89a6", "#7b6888"]);
+
+      // Define tooltip
+      const tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+      // Initialize D3 chord layout
+      const chord = d3
+        .chord()
+        .padAngle(0.05)
+        .sortSubgroups(d3.descending)
+        .sortChords(d3.descending);
+
+      // Initialize SVG element
+      const svg = d3
+        .select("#chord-svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", `translate(${width / 2},${height / 2})`);
+
+      // Compute chord layout
+      const chords = chord(matrix);
+
+      // Add groups (arcs)
+      const group = svg
+        .append("g")
+        .selectAll("g")
+        .data(chords.groups)
+        .join("g");
+
+      group
+        .append("path")
+        .attr("fill", (d) => color(groups[d.index]))
+        .attr("stroke", (d) => d3.rgb(color(groups[d.index])).darker())
+        .attr("d", d3.arc().innerRadius(innerRadius).outerRadius(outerRadius))
+        .on("mouseover", (event, d) => {
+          tooltip.transition().duration(200).style("opacity", 0.9);
+          tooltip
+            .html(
+              `Group: ${groups[d.index]} <br> Genes: ${allGenes
+                .filter((g) => {
+                  return (
+                    groups[chords.groups[d.index].index] ===
+                      groups[chords.groups[g.index].index] &&
+                    g.index !== d.index
+                  );
+                })
+                .join(", ")}`
+            )
+            .style("left", event.pageX + 10 + "px")
+            .style("top", event.pageY - 28 + "px");
+        })
+        .on("mouseout", () => {
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      // Add ribbons (chords)
+      svg
+        .append("g")
+        .attr("fill-opacity", 0.67)
+        .selectAll("path")
+        .data(chords)
+        .join("path")
+        .attr(
+          "d",
+          d3
+            .ribbonArrow()
+            .radius(innerRadius - 1)
+            .padAngle(0 / innerRadius)
+        )
+        .attr("fill", (d) => color(groups[d.target.index]))
+        .attr("stroke", (d) => d3.rgb(color(groups[d.target.index])).darker())
+        .on("mouseover", (event, d) => {
+          tooltip.transition().duration(200).style("opacity", 0.9);
+          tooltip
+            .html(
+              `${allGenes[d.source.index]} : ${groups[d.source.index]} → ${
+                groups[d.target.index]
+              }`
+            )
+            .style("left", event.pageX + 10 + "px")
+            .style("top", event.pageY - 28 + "px");
+        })
+        .on("mouseout", () => {
+          tooltip.transition().duration(500).style("opacity", 0);
+        });
+
+      // Add group labels
+      group
+        .append("text")
+        .each((d) => {
+          d.angle = (d.startAngle + d.endAngle) / 2;
+        })
+        .attr("dy", ".35em")
+        .attr(
+          "transform",
+          (d) => `
+        rotate(${(d.angle * 180) / Math.PI - 90})
+        translate(${outerRadius + 10})
+        ${d.angle > Math.PI ? "rotate(180)" : ""}
+      `
+        )
+        .attr("text-anchor", (d) => (d.angle > Math.PI ? "end" : null))
+        .text((d) => groups[d.index]);
+    </script>
+  </body>
+</html>
